@@ -1,0 +1,38 @@
+-- Ensure database exists
+CREATE DATABASE IF NOT EXISTS scheduling;
+USE scheduling;
+
+-- Populate `user` table
+INSERT INTO `user` (userId, userName, password, active, createDate, createdBy, lastUpdate, lastUpdateBy)
+VALUES 
+(1, 'test', 'test', 1, NOW(), 'system', NOW(), 'system');
+
+-- Populate `country` table
+INSERT INTO `country` (countryId, country, createDate, createdBy, lastUpdate, lastUpdateBy)
+VALUES 
+(1, 'United States', NOW(), 'system', NOW(), 'system'),
+(2, 'United Kingdom', NOW(), 'system', NOW(), 'system');
+
+-- Populate `city` table
+INSERT INTO `city` (cityId, city, countryId, createDate, createdBy, lastUpdate, lastUpdateBy)
+VALUES 
+(1, 'New York', 1, NOW(), 'system', NOW(), 'system'),
+(2, 'London', 2, NOW(), 'system', NOW(), 'system');
+
+-- Populate `address` table
+INSERT INTO `address` (addressId, address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdateBy)
+VALUES 
+(1, '123 Main Street', 'Suite 100', 1, '10001', '123-456-7890', NOW(), 'system', NOW(), 'system'),
+(2, '456 High Street', NULL, 2, 'EC1A 1BB', '987-654-3210', NOW(), 'system', NOW(), 'system');
+
+-- Populate `customer` table
+INSERT INTO `customer` (customerId, customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy)
+VALUES 
+(1, 'John Doe', 1, 1, NOW(), 'system', NOW(), 'system'),
+(2, 'Jane Smith', 2, 1, NOW(), 'system', NOW(), 'system');
+
+-- Populate `appointment` table
+INSERT INTO `appointment` (appointmentId, customerId, userId, title, description, location, contact, type, url, start, end, createDate, createdBy, lastUpdate, lastUpdateBy)
+VALUES 
+(1, 1, 1, 'Consultation', 'Initial consultation with John Doe', '123 Main Street, Suite 100', '123-456-7890', 'Consulting', NULL, '2025-01-21 10:00:00', '2025-01-21 11:00:00', NOW(), 'system', NOW(), 'system'),
+(2, 2, 1, 'Follow-Up', 'Follow-up with Jane Smith', '456 High Street', '987-654-3210', 'Follow-Up', NULL, '2025-01-21 14:00:00', '2025-01-21 15:00:00', NOW(), 'system', NOW(), 'system');
