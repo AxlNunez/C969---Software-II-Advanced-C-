@@ -143,6 +143,10 @@
             this.dgvCustomers.Size = new System.Drawing.Size(760, 200);
             this.dgvCustomers.ReadOnly = true;
             this.dgvCustomers.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvCustomers.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvCustomers.MultiSelect = false;
+            this.dgvCustomers.SelectionChanged += new System.EventHandler(this.dgvCustomers_SelectionChanged);
+
 
             // 
             // CustomerForm

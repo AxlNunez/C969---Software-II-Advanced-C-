@@ -55,6 +55,8 @@
             // 
             this.cmbCustomer.Location = new System.Drawing.Point(120, 20);
             this.cmbCustomer.Size = new System.Drawing.Size(200, 23);
+            this.cmbCustomer.DisplayMember = "Name";
+            this.cmbCustomer.ValueMember = "Id";
 
             // 
             // lblTitle
@@ -111,6 +113,7 @@
             // 
             this.cmbType.Location = new System.Drawing.Point(120, 180);
             this.cmbType.Size = new System.Drawing.Size(200, 23);
+            this.cmbType.Items.AddRange(new object[] { "Consultation", "Follow-Up", "Meeting" });
 
             // 
             // lblDescription
@@ -165,6 +168,10 @@
             this.dgvAppointments.Size = new System.Drawing.Size(760, 200);
             this.dgvAppointments.ReadOnly = true;
             this.dgvAppointments.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgvAppointments.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+            this.dgvAppointments.MultiSelect = false;
+            this.dgvAppointments.SelectionChanged += new System.EventHandler(this.dgvAppointments_SelectionChanged);
+
 
             // 
             // AppointmentForm

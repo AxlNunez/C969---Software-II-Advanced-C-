@@ -1,37 +1,116 @@
--- Ensure database exists
 CREATE DATABASE IF NOT EXISTS scheduling;
 USE scheduling;
 
--- Populate `user` table
-INSERT INTO `user` (userId, userName, password, active, createDate, createdBy, lastUpdate, lastUpdateBy)
-VALUES 
-(1, 'test', 'test', 1, NOW(), 'system', NOW(), 'system');
+CREATE TABLE IF NOT EXISTS `user` (
+    userId INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(50) NOT NULL,
+    active TINYINT(1) NOT NULL DEFAULT 1,
+    createDate DATETIME NOT NULL DEFAULT NOW(),
+    createdBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    lastUpdate DATETIME NOT NULL DEFAULT NOW(),
+    lastUpdateBy VARCHAR(50) NOT NULL DEFAULT 'system'
+);
 
--- Populate `country` table
+INSERT INTO `user` (userId, username, password, active, createDate, createdBy, lastUpdate, lastUpdateBy)
+VALUES 
+(1, 'test', 'test', 1, NOW(), 'system', NOW(), 'system'),
+(2, 'admin', 'admin', 1, NOW(), 'system', NOW(), 'system');
+
+CREATE TABLE IF NOT EXISTS `login_activity` (
+    logId INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
+    loginTime DATETIME NOT NULL DEFAULT NOW(),
+    location VARCHAR(100),
+    FOREIGN KEY (username) REFERENCES `user` (username)
+);
+
+CREATE TABLE IF NOT EXISTS `country` (
+    countryId INT AUTO_INCREMENT PRIMARY KEY,
+    country VARCHAR(50) NOT NULL,
+    createDate DATETIME NOT NULL DEFAULT NOW(),
+    createdBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    lastUpdate DATETIME NOT NULL DEFAULT NOW(),
+    lastUpdateBy VARCHAR(50) NOT NULL DEFAULT 'system'
+);
+
 INSERT INTO `country` (countryId, country, createDate, createdBy, lastUpdate, lastUpdateBy)
 VALUES 
 (1, 'United States', NOW(), 'system', NOW(), 'system'),
 (2, 'United Kingdom', NOW(), 'system', NOW(), 'system');
 
--- Populate `city` table
+CREATE TABLE IF NOT EXISTS `city` (
+    cityId INT AUTO_INCREMENT PRIMARY KEY,
+    city VARCHAR(50) NOT NULL,
+    countryId INT NOT NULL,
+    createDate DATETIME NOT NULL DEFAULT NOW(),
+    createdBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    lastUpdate DATETIME NOT NULL DEFAULT NOW(),
+    lastUpdateBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    FOREIGN KEY (countryId) REFERENCES country(countryId)
+);
+
 INSERT INTO `city` (cityId, city, countryId, createDate, createdBy, lastUpdate, lastUpdateBy)
 VALUES 
 (1, 'New York', 1, NOW(), 'system', NOW(), 'system'),
 (2, 'London', 2, NOW(), 'system', NOW(), 'system');
 
--- Populate `address` table
+CREATE TABLE IF NOT EXISTS `address` (
+    addressId INT AUTO_INCREMENT PRIMARY KEY,
+    address VARCHAR(100) NOT NULL,
+    address2 VARCHAR(100),
+    cityId INT NOT NULL,
+    postalCode VARCHAR(20) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    createDate DATETIME NOT NULL DEFAULT NOW(),
+    createdBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    lastUpdate DATETIME NOT NULL DEFAULT NOW(),
+    lastUpdateBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    FOREIGN KEY (cityId) REFERENCES city(cityId)
+);
+
 INSERT INTO `address` (addressId, address, address2, cityId, postalCode, phone, createDate, createdBy, lastUpdate, lastUpdateBy)
 VALUES 
 (1, '123 Main Street', 'Suite 100', 1, '10001', '123-456-7890', NOW(), 'system', NOW(), 'system'),
 (2, '456 High Street', NULL, 2, 'EC1A 1BB', '987-654-3210', NOW(), 'system', NOW(), 'system');
 
--- Populate `customer` table
+CREATE TABLE IF NOT EXISTS `customer` (
+    customerId INT AUTO_INCREMENT PRIMARY KEY,
+    customerName VARCHAR(50) NOT NULL,
+    addressId INT NOT NULL,
+    active TINYINT(1) NOT NULL DEFAULT 1,
+    createDate DATETIME NOT NULL DEFAULT NOW(),
+    createdBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    lastUpdate DATETIME NOT NULL DEFAULT NOW(),
+    lastUpdateBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    FOREIGN KEY (addressId) REFERENCES address(addressId)
+);
+
 INSERT INTO `customer` (customerId, customerName, addressId, active, createDate, createdBy, lastUpdate, lastUpdateBy)
 VALUES 
 (1, 'John Doe', 1, 1, NOW(), 'system', NOW(), 'system'),
 (2, 'Jane Smith', 2, 1, NOW(), 'system', NOW(), 'system');
 
--- Populate `appointment` table
+CREATE TABLE IF NOT EXISTS `appointment` (
+    appointmentId INT AUTO_INCREMENT PRIMARY KEY,
+    customerId INT NOT NULL,
+    userId INT NOT NULL,
+    title VARCHAR(50) NOT NULL,
+    description TEXT,
+    location VARCHAR(100),
+    contact VARCHAR(50),
+    type VARCHAR(50) NOT NULL,
+    url VARCHAR(255),
+    start DATETIME NOT NULL,
+    end DATETIME NOT NULL,
+    createDate DATETIME NOT NULL DEFAULT NOW(),
+    createdBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    lastUpdate DATETIME NOT NULL DEFAULT NOW(),
+    lastUpdateBy VARCHAR(50) NOT NULL DEFAULT 'system',
+    FOREIGN KEY (customerId) REFERENCES customer(customerId),
+    FOREIGN KEY (userId) REFERENCES user(userId)
+);
+
 INSERT INTO `appointment` (appointmentId, customerId, userId, title, description, location, contact, type, url, start, end, createDate, createdBy, lastUpdate, lastUpdateBy)
 VALUES 
 (1, 1, 1, 'Consultation', 'Initial consultation with John Doe', '123 Main Street, Suite 100', '123-456-7890', 'Consulting', NULL, '2025-01-21 10:00:00', '2025-01-21 11:00:00', NOW(), 'system', NOW(), 'system'),

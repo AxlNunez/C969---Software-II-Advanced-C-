@@ -1,32 +1,58 @@
 ﻿using System;
+using System.Configuration;
 using System.Data;
+using MySql.Data.MySqlClient;
 using System.Windows.Forms;
 
 namespace C969___Axl_Nunez.Forms
 {
     public partial class AppointmentForm : Form
     {
+        private readonly string connectionString;
+
         public AppointmentForm()
         {
             InitializeComponent();
+            connectionString = ConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString;
             LoadAppointments();
             LoadCustomers();
+            LoadTypes();
+            dgvAppointments.ClearSelection();
         }
 
         private void LoadAppointments()
         {
             try
             {
-                var dt = new DataTable();
-                dt.Columns.Add("Customer");
-                dt.Columns.Add("Title");
-                dt.Columns.Add("Start Time");
-                dt.Columns.Add("End Time");
-                dt.Columns.Add("Type");
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = @"
+                SELECT 
+                    a.appointmentId AS `AppointmentId`,
+                    a.title AS `Title`,
+                    c.customerName AS `Customer`,
+                    a.start AS `Start Time`,
+                    a.end AS `End Time`,
+                    a.type AS `Type`
+                FROM appointment a
+                INNER JOIN customer c ON a.customerId = c.customerId";
 
-                // Placeholder data - Replace with database query
-                dt.Rows.Add("John Doe", "Meeting", "2025-01-21 10:00", "2025-01-21 11:00", "Consultation");
-                dgvAppointments.DataSource = dt;
+                    using (var cmd = new MySqlCommand(query, connection))
+                    using (var adapter = new MySqlDataAdapter(cmd))
+                    {
+                        var dt = new DataTable();
+                        adapter.Fill(dt);
+                        dgvAppointments.DataSource = dt;
+                    }
+                }
+
+                if (dgvAppointments.Columns.Contains("AppointmentId"))
+                {
+                    dgvAppointments.Columns["AppointmentId"].Visible = false;
+                }
+
+                dgvAppointments.ClearSelection();
             }
             catch (Exception ex)
             {
@@ -34,13 +60,29 @@ namespace C969___Axl_Nunez.Forms
             }
         }
 
+
+
         private void LoadCustomers()
         {
             try
             {
-                // Placeholder data - Replace with database query
-                cmbCustomer.Items.Add("John Doe");
-                cmbCustomer.Items.Add("Jane Smith");
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT customerId, customerName FROM customer";
+
+                    using (var cmd = new MySqlCommand(query, connection))
+                    using (var reader = cmd.ExecuteReader())
+                    {
+                        cmbCustomer.Items.Clear();
+                        while (reader.Read())
+                        {
+                            cmbCustomer.Items.Add(new { Id = reader.GetInt32("customerId"), Name = reader.GetString("customerName") });
+                        }
+                        cmbCustomer.DisplayMember = "Name";
+                        cmbCustomer.ValueMember = "Id";
+                    }
+                }
             }
             catch (Exception ex)
             {
@@ -48,13 +90,42 @@ namespace C969___Axl_Nunez.Forms
             }
         }
 
+        private void LoadTypes()
+        {
+            cmbType.Items.Clear();
+            cmbType.Items.Add("Consultation");
+            cmbType.Items.Add("Follow-Up");
+            cmbType.Items.Add("Review");
+            cmbType.Items.Add("Other");
+        }
+
+
         private void BtnAdd_Click(object sender, EventArgs e)
         {
             try
             {
                 if (ValidateAppointment())
                 {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string query = @"
+                            INSERT INTO appointment (customerId, userId, title, description, location, contact, type, start, end, createDate, createdBy, lastUpdate, lastUpdateBy)
+                            VALUES (@customerId, 1, @title, @description, 'Default Location', 'Default Contact', @type, @start, @end, NOW(), 'system', NOW(), 'system')";
+
+                        using (var cmd = new MySqlCommand(query, connection))
+                        {
+                            cmd.Parameters.AddWithValue("@customerId", ((dynamic)cmbCustomer.SelectedItem).Id);
+                            cmd.Parameters.AddWithValue("@title", txtTitle.Text.Trim());
+                            cmd.Parameters.AddWithValue("@description", txtDescription.Text.Trim());
+                            cmd.Parameters.AddWithValue("@type", cmbType.SelectedItem.ToString());
+                            cmd.Parameters.AddWithValue("@start", dtpStartTime.Value);
+                            cmd.Parameters.AddWithValue("@end", dtpEndTime.Value);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
                     MessageBox.Show("Appointment added successfully!");
+                    ClearFields();
                     LoadAppointments();
                 }
             }
@@ -68,9 +139,36 @@ namespace C969___Axl_Nunez.Forms
         {
             try
             {
+                if (dgvAppointments.SelectedRows.Count == 0)
+                {
+                    MessageBox.Show("Please select an appointment to update.");
+                    return;
+                }
+
                 if (ValidateAppointment())
                 {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string query = @"
+                            UPDATE appointment
+                            SET title = @title, description = @description, type = @type, start = @start, end = @end
+                            WHERE appointmentId = @appointmentId";
+
+                        using (var cmd = new MySqlCommand(query, connection))
+                        {
+                            var selectedRow = dgvAppointments.SelectedRows[0];
+                            cmd.Parameters.AddWithValue("@title", txtTitle.Text.Trim());
+                            cmd.Parameters.AddWithValue("@description", txtDescription.Text.Trim());
+                            cmd.Parameters.AddWithValue("@type", cmbType.SelectedItem.ToString());
+                            cmd.Parameters.AddWithValue("@start", dtpStartTime.Value);
+                            cmd.Parameters.AddWithValue("@end", dtpEndTime.Value);
+                            cmd.Parameters.AddWithValue("@appointmentId", selectedRow.Cells["AppointmentId"].Value);
+                            cmd.ExecuteNonQuery();
+                        }
+                    }
                     MessageBox.Show("Appointment updated successfully!");
+                    ClearFields();
                     LoadAppointments();
                 }
             }
@@ -84,15 +182,26 @@ namespace C969___Axl_Nunez.Forms
         {
             try
             {
-                if (dgvAppointments.SelectedRows.Count > 0)
-                {
-                    MessageBox.Show("Appointment deleted successfully!");
-                    LoadAppointments();
-                }
-                else
+                if (dgvAppointments.SelectedRows.Count == 0)
                 {
                     MessageBox.Show("Please select an appointment to delete.");
+                    return;
                 }
+
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "DELETE FROM appointment WHERE appointmentId = @appointmentId";
+
+                    using (var cmd = new MySqlCommand(query, connection))
+                    {
+                        var selectedRow = dgvAppointments.SelectedRows[0];
+                        cmd.Parameters.AddWithValue("@appointmentId", selectedRow.Cells["AppointmentId"].Value);
+                        cmd.ExecuteNonQuery();
+                    }
+                }
+                MessageBox.Show("Appointment deleted successfully!");
+                LoadAppointments();
             }
             catch (Exception ex)
             {
@@ -100,10 +209,6 @@ namespace C969___Axl_Nunez.Forms
             }
         }
 
-        private void BtnClear_Click(object sender, EventArgs e)
-        {
-            ClearFields();
-        }
 
         private bool ValidateAppointment()
         {
@@ -151,9 +256,54 @@ namespace C969___Axl_Nunez.Forms
 
         private bool CheckOverlappingAppointments(DateTime start, DateTime end)
         {
-            // Placeholder logic - Replace with database query to check for overlaps
-            return false;
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = @"
+                        SELECT COUNT(*)
+                        FROM appointment
+                        WHERE (@start < end AND @end > start)";
+
+                    using (var cmd = new MySqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@start", start);
+                        cmd.Parameters.AddWithValue("@end", end);
+                        int count = Convert.ToInt32(cmd.ExecuteScalar());
+                        return count > 0;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error checking overlapping appointments: {ex.Message}");
+                return false;
+            }
         }
+
+        private void dgvAppointments_SelectionChanged(object sender, EventArgs e)
+        {
+            if (dgvAppointments.SelectedRows.Count > 0)
+            {
+                var selectedRow = dgvAppointments.SelectedRows[0];
+
+                // Populate the form controls
+                txtTitle.Text = selectedRow.Cells["Title"].Value.ToString();
+                cmbCustomer.SelectedIndex = cmbCustomer.FindStringExact(selectedRow.Cells["Customer"].Value.ToString());
+                cmbType.SelectedIndex = cmbType.FindStringExact(selectedRow.Cells["Type"].Value.ToString());
+
+                dtpStartTime.Value = DateTime.Parse(selectedRow.Cells["Start Time"].Value.ToString());
+                dtpEndTime.Value = DateTime.Parse(selectedRow.Cells["End Time"].Value.ToString());
+            }
+        }
+
+
+        private void BtnClear_Click(object sender, EventArgs e)
+        {
+            ClearFields();
+        }
+
 
         private void ClearFields()
         {
