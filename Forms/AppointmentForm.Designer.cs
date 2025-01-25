@@ -22,182 +22,198 @@
 
         private void InitializeComponent()
         {
-            this.cmbCustomer = new System.Windows.Forms.ComboBox();
-            this.txtTitle = new System.Windows.Forms.TextBox();
-            this.dtpStartTime = new System.Windows.Forms.DateTimePicker();
-            this.dtpEndTime = new System.Windows.Forms.DateTimePicker();
-            this.cmbType = new System.Windows.Forms.ComboBox();
-            this.txtDescription = new System.Windows.Forms.TextBox();
-            this.btnAdd = new System.Windows.Forms.Button();
-            this.btnUpdate = new System.Windows.Forms.Button();
-            this.btnDelete = new System.Windows.Forms.Button();
-            this.btnClear = new System.Windows.Forms.Button();
-            this.dgvAppointments = new System.Windows.Forms.DataGridView();
-            this.lblCustomer = new System.Windows.Forms.Label();
-            this.lblTitle = new System.Windows.Forms.Label();
-            this.lblStartTime = new System.Windows.Forms.Label();
-            this.lblEndTime = new System.Windows.Forms.Label();
-            this.lblType = new System.Windows.Forms.Label();
-            this.lblDescription = new System.Windows.Forms.Label();
-
-            ((System.ComponentModel.ISupportInitialize)(this.dgvAppointments)).BeginInit();
-            this.SuspendLayout();
-
-            // 
-            // lblCustomer
-            // 
-            this.lblCustomer.Text = "Customer:";
-            this.lblCustomer.Location = new System.Drawing.Point(20, 20);
-            this.lblCustomer.Size = new System.Drawing.Size(80, 20);
-
+            cmbCustomer = new ComboBox();
+            txtTitle = new TextBox();
+            dtpStartTime = new DateTimePicker();
+            dtpEndTime = new DateTimePicker();
+            cmbType = new ComboBox();
+            txtDescription = new TextBox();
+            btnAdd = new Button();
+            btnUpdate = new Button();
+            btnDelete = new Button();
+            btnClear = new Button();
+            dgvAppointments = new DataGridView();
+            lblCustomer = new Label();
+            lblTitle = new Label();
+            lblStartTime = new Label();
+            lblEndTime = new Label();
+            lblType = new Label();
+            lblDescription = new Label();
+            ((System.ComponentModel.ISupportInitialize)dgvAppointments).BeginInit();
+            SuspendLayout();
             // 
             // cmbCustomer
             // 
-            this.cmbCustomer.Location = new System.Drawing.Point(120, 20);
-            this.cmbCustomer.Size = new System.Drawing.Size(200, 23);
-            this.cmbCustomer.DisplayMember = "Name";
-            this.cmbCustomer.ValueMember = "Id";
-
-            // 
-            // lblTitle
-            // 
-            this.lblTitle.Text = "Title:";
-            this.lblTitle.Location = new System.Drawing.Point(20, 60);
-            this.lblTitle.Size = new System.Drawing.Size(80, 20);
-
+            cmbCustomer.DisplayMember = "Name";
+            cmbCustomer.Location = new Point(120, 20);
+            cmbCustomer.Name = "cmbCustomer";
+            cmbCustomer.Size = new Size(200, 23);
+            cmbCustomer.TabIndex = 1;
+            cmbCustomer.ValueMember = "Id";
             // 
             // txtTitle
             // 
-            this.txtTitle.Location = new System.Drawing.Point(120, 60);
-            this.txtTitle.Size = new System.Drawing.Size(200, 23);
-
-            // 
-            // lblStartTime
-            // 
-            this.lblStartTime.Text = "Start Time:";
-            this.lblStartTime.Location = new System.Drawing.Point(20, 100);
-            this.lblStartTime.Size = new System.Drawing.Size(80, 20);
-
+            txtTitle.Location = new Point(120, 60);
+            txtTitle.Name = "txtTitle";
+            txtTitle.Size = new Size(200, 23);
+            txtTitle.TabIndex = 3;
             // 
             // dtpStartTime
             // 
-            this.dtpStartTime.Location = new System.Drawing.Point(120, 100);
-            this.dtpStartTime.Size = new System.Drawing.Size(200, 23);
-            this.dtpStartTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpStartTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-
-            // 
-            // lblEndTime
-            // 
-            this.lblEndTime.Text = "End Time:";
-            this.lblEndTime.Location = new System.Drawing.Point(20, 140);
-            this.lblEndTime.Size = new System.Drawing.Size(80, 20);
-
+            dtpStartTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dtpStartTime.Format = DateTimePickerFormat.Custom;
+            dtpStartTime.Location = new Point(120, 100);
+            dtpStartTime.Name = "dtpStartTime";
+            dtpStartTime.Size = new Size(200, 23);
+            dtpStartTime.TabIndex = 5;
             // 
             // dtpEndTime
             // 
-            this.dtpEndTime.Location = new System.Drawing.Point(120, 140);
-            this.dtpEndTime.Size = new System.Drawing.Size(200, 23);
-            this.dtpEndTime.Format = System.Windows.Forms.DateTimePickerFormat.Custom;
-            this.dtpEndTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
-
-            // 
-            // lblType
-            // 
-            this.lblType.Text = "Type:";
-            this.lblType.Location = new System.Drawing.Point(20, 180);
-            this.lblType.Size = new System.Drawing.Size(80, 20);
-
+            dtpEndTime.CustomFormat = "yyyy-MM-dd HH:mm:ss";
+            dtpEndTime.Format = DateTimePickerFormat.Custom;
+            dtpEndTime.Location = new Point(120, 140);
+            dtpEndTime.Name = "dtpEndTime";
+            dtpEndTime.Size = new Size(200, 23);
+            dtpEndTime.TabIndex = 7;
             // 
             // cmbType
             // 
-            this.cmbType.Location = new System.Drawing.Point(120, 180);
-            this.cmbType.Size = new System.Drawing.Size(200, 23);
-            this.cmbType.Items.AddRange(new object[] { "Consultation", "Follow-Up", "Meeting" });
-
-            // 
-            // lblDescription
-            // 
-            this.lblDescription.Text = "Description:";
-            this.lblDescription.Location = new System.Drawing.Point(20, 220);
-            this.lblDescription.Size = new System.Drawing.Size(80, 20);
-
+            cmbType.Items.AddRange(new object[] { "Consultation", "Follow-Up", "Meeting" });
+            cmbType.Location = new Point(120, 180);
+            cmbType.Name = "cmbType";
+            cmbType.Size = new Size(200, 23);
+            cmbType.TabIndex = 9;
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(120, 220);
-            this.txtDescription.Size = new System.Drawing.Size(200, 60);
-            this.txtDescription.Multiline = true;
-
+            txtDescription.Location = new Point(120, 220);
+            txtDescription.Multiline = true;
+            txtDescription.Name = "txtDescription";
+            txtDescription.Size = new Size(200, 60);
+            txtDescription.TabIndex = 11;
             // 
             // btnAdd
             // 
-            this.btnAdd.Text = "Add";
-            this.btnAdd.Location = new System.Drawing.Point(20, 300);
-            this.btnAdd.Size = new System.Drawing.Size(80, 30);
-            this.btnAdd.Click += new System.EventHandler(this.BtnAdd_Click);
-
+            btnAdd.Location = new Point(20, 300);
+            btnAdd.Name = "btnAdd";
+            btnAdd.Size = new Size(80, 30);
+            btnAdd.TabIndex = 12;
+            btnAdd.Text = "Add";
+            btnAdd.Click += BtnAdd_Click;
             // 
             // btnUpdate
             // 
-            this.btnUpdate.Text = "Update";
-            this.btnUpdate.Location = new System.Drawing.Point(120, 300);
-            this.btnUpdate.Size = new System.Drawing.Size(80, 30);
-            this.btnUpdate.Click += new System.EventHandler(this.BtnUpdate_Click);
-
+            btnUpdate.Location = new Point(120, 300);
+            btnUpdate.Name = "btnUpdate";
+            btnUpdate.Size = new Size(80, 30);
+            btnUpdate.TabIndex = 13;
+            btnUpdate.Text = "Update";
+            btnUpdate.Click += BtnUpdate_Click;
             // 
             // btnDelete
             // 
-            this.btnDelete.Text = "Delete";
-            this.btnDelete.Location = new System.Drawing.Point(220, 300);
-            this.btnDelete.Size = new System.Drawing.Size(80, 30);
-            this.btnDelete.Click += new System.EventHandler(this.BtnDelete_Click);
-
+            btnDelete.Location = new Point(220, 300);
+            btnDelete.Name = "btnDelete";
+            btnDelete.Size = new Size(80, 30);
+            btnDelete.TabIndex = 14;
+            btnDelete.Text = "Delete";
+            btnDelete.Click += BtnDelete_Click;
             // 
             // btnClear
             // 
-            this.btnClear.Text = "Clear";
-            this.btnClear.Location = new System.Drawing.Point(320, 300);
-            this.btnClear.Size = new System.Drawing.Size(80, 30);
-            this.btnClear.Click += new System.EventHandler(this.BtnClear_Click);
-
+            btnClear.Location = new Point(320, 300);
+            btnClear.Name = "btnClear";
+            btnClear.Size = new Size(80, 30);
+            btnClear.TabIndex = 15;
+            btnClear.Text = "Clear";
+            btnClear.Click += BtnClear_Click;
             // 
             // dgvAppointments
             // 
-            this.dgvAppointments.Location = new System.Drawing.Point(20, 350);
-            this.dgvAppointments.Size = new System.Drawing.Size(760, 200);
-            this.dgvAppointments.ReadOnly = true;
-            this.dgvAppointments.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvAppointments.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvAppointments.MultiSelect = false;
-            this.dgvAppointments.SelectionChanged += new System.EventHandler(this.dgvAppointments_SelectionChanged);
-
-
+            dgvAppointments.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            dgvAppointments.Location = new Point(20, 350);
+            dgvAppointments.MultiSelect = false;
+            dgvAppointments.Name = "dgvAppointments";
+            dgvAppointments.ReadOnly = true;
+            dgvAppointments.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvAppointments.Size = new Size(760, 200);
+            dgvAppointments.TabIndex = 16;
+            dgvAppointments.SelectionChanged += dgvAppointments_SelectionChanged;
+            // 
+            // lblCustomer
+            // 
+            lblCustomer.Location = new Point(20, 20);
+            lblCustomer.Name = "lblCustomer";
+            lblCustomer.Size = new Size(80, 20);
+            lblCustomer.TabIndex = 0;
+            lblCustomer.Text = "Customer:";
+            // 
+            // lblTitle
+            // 
+            lblTitle.Location = new Point(20, 60);
+            lblTitle.Name = "lblTitle";
+            lblTitle.Size = new Size(80, 20);
+            lblTitle.TabIndex = 2;
+            lblTitle.Text = "Title:";
+            // 
+            // lblStartTime
+            // 
+            lblStartTime.Location = new Point(20, 100);
+            lblStartTime.Name = "lblStartTime";
+            lblStartTime.Size = new Size(80, 20);
+            lblStartTime.TabIndex = 4;
+            lblStartTime.Text = "Start Time:";
+            // 
+            // lblEndTime
+            // 
+            lblEndTime.Location = new Point(20, 140);
+            lblEndTime.Name = "lblEndTime";
+            lblEndTime.Size = new Size(80, 20);
+            lblEndTime.TabIndex = 6;
+            lblEndTime.Text = "End Time:";
+            // 
+            // lblType
+            // 
+            lblType.Location = new Point(20, 180);
+            lblType.Name = "lblType";
+            lblType.Size = new Size(80, 20);
+            lblType.TabIndex = 8;
+            lblType.Text = "Type:";
+            // 
+            // lblDescription
+            // 
+            lblDescription.Location = new Point(20, 220);
+            lblDescription.Name = "lblDescription";
+            lblDescription.Size = new Size(80, 20);
+            lblDescription.TabIndex = 10;
+            lblDescription.Text = "Description:";
             // 
             // AppointmentForm
             // 
-            this.ClientSize = new System.Drawing.Size(800, 600);
-            this.Controls.Add(this.lblCustomer);
-            this.Controls.Add(this.cmbCustomer);
-            this.Controls.Add(this.lblTitle);
-            this.Controls.Add(this.txtTitle);
-            this.Controls.Add(this.lblStartTime);
-            this.Controls.Add(this.dtpStartTime);
-            this.Controls.Add(this.lblEndTime);
-            this.Controls.Add(this.dtpEndTime);
-            this.Controls.Add(this.lblType);
-            this.Controls.Add(this.cmbType);
-            this.Controls.Add(this.lblDescription);
-            this.Controls.Add(this.txtDescription);
-            this.Controls.Add(this.btnAdd);
-            this.Controls.Add(this.btnUpdate);
-            this.Controls.Add(this.btnDelete);
-            this.Controls.Add(this.btnClear);
-            this.Controls.Add(this.dgvAppointments);
-            this.Text = "Appointment Management";
-            ((System.ComponentModel.ISupportInitialize)(this.dgvAppointments)).EndInit();
-            this.ResumeLayout(false);
-            this.PerformLayout();
+            ClientSize = new Size(800, 600);
+            Controls.Add(lblCustomer);
+            Controls.Add(cmbCustomer);
+            Controls.Add(lblTitle);
+            Controls.Add(txtTitle);
+            Controls.Add(lblStartTime);
+            Controls.Add(dtpStartTime);
+            Controls.Add(lblEndTime);
+            Controls.Add(dtpEndTime);
+            Controls.Add(lblType);
+            Controls.Add(cmbType);
+            Controls.Add(lblDescription);
+            Controls.Add(txtDescription);
+            Controls.Add(btnAdd);
+            Controls.Add(btnUpdate);
+            Controls.Add(btnDelete);
+            Controls.Add(btnClear);
+            Controls.Add(dgvAppointments);
+            Name = "AppointmentForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Appointment Management";
+            ((System.ComponentModel.ISupportInitialize)dgvAppointments).EndInit();
+            ResumeLayout(false);
+            PerformLayout();
         }
     }
 }

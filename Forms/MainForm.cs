@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -15,6 +16,8 @@ namespace C969___Axl_Nunez.Forms
         public MainForm()
         {
             InitializeComponent();
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("es-ES");
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo("es-ES");
         }
 
         private void btnManageCustomers_Click(object sender, EventArgs e)

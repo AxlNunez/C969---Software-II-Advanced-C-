@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Configuration;
 using System.Data;
-using MySql.Data.MySqlClient;
 using System.Windows.Forms;
+using MySql.Data.MySqlClient;
+using System.Globalization;
 
 namespace C969___Axl_Nunez.Forms
 {
@@ -18,6 +19,8 @@ namespace C969___Axl_Nunez.Forms
             LoadCustomers();
             LoadTypes();
             dgvAppointments.ClearSelection();
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("es-ES");
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo("es-ES");
         }
 
         private void LoadAppointments()
@@ -43,6 +46,14 @@ namespace C969___Axl_Nunez.Forms
                     {
                         var dt = new DataTable();
                         adapter.Fill(dt);
+
+                        // Convert times to local time zone
+                        foreach (DataRow row in dt.Rows)
+                        {
+                            row["Start Time"] = ConvertFromUtc((DateTime)row["Start Time"]);
+                            row["End Time"] = ConvertFromUtc((DateTime)row["End Time"]);
+                        }
+
                         dgvAppointments.DataSource = dt;
                     }
                 }
@@ -59,7 +70,6 @@ namespace C969___Axl_Nunez.Forms
                 MessageBox.Show($"Error loading appointments: {ex.Message}");
             }
         }
-
 
 
         private void LoadCustomers()
@@ -99,6 +109,17 @@ namespace C969___Axl_Nunez.Forms
             cmbType.Items.Add("Other");
         }
 
+        private DateTime ConvertToUtc(DateTime localTime)
+        {
+            TimeZoneInfo localZone = TimeZoneInfo.Local; // User's local time zone
+            return TimeZoneInfo.ConvertTimeToUtc(localTime, localZone);
+        }
+
+        private DateTime ConvertFromUtc(DateTime utcTime)
+        {
+            TimeZoneInfo localZone = TimeZoneInfo.Local; // User's local time zone
+            return TimeZoneInfo.ConvertTimeFromUtc(utcTime, localZone);
+        }
 
         private void BtnAdd_Click(object sender, EventArgs e)
         {
@@ -119,8 +140,9 @@ namespace C969___Axl_Nunez.Forms
                             cmd.Parameters.AddWithValue("@title", txtTitle.Text.Trim());
                             cmd.Parameters.AddWithValue("@description", txtDescription.Text.Trim());
                             cmd.Parameters.AddWithValue("@type", cmbType.SelectedItem.ToString());
-                            cmd.Parameters.AddWithValue("@start", dtpStartTime.Value);
-                            cmd.Parameters.AddWithValue("@end", dtpEndTime.Value);
+                            cmd.Parameters.AddWithValue("@start", ConvertToUtc(dtpStartTime.Value));
+                            cmd.Parameters.AddWithValue("@end", ConvertToUtc(dtpEndTime.Value));
+
                             cmd.ExecuteNonQuery();
                         }
                     }
@@ -210,6 +232,12 @@ namespace C969___Axl_Nunez.Forms
         }
 
 
+        private DateTime AdjustToTimeZone(DateTime dateTime)
+        {
+            TimeZoneInfo est = TimeZoneInfo.FindSystemTimeZoneById("Eastern Standard Time");
+            return TimeZoneInfo.ConvertTimeToUtc(dateTime, est);
+        }
+
         private bool ValidateAppointment()
         {
             if (cmbCustomer.SelectedIndex == -1)
@@ -253,7 +281,6 @@ namespace C969___Axl_Nunez.Forms
             return start.TimeOfDay >= startOfDay && end.TimeOfDay <= endOfDay &&
                    start.DayOfWeek != DayOfWeek.Saturday && start.DayOfWeek != DayOfWeek.Sunday;
         }
-
         private bool CheckOverlappingAppointments(DateTime start, DateTime end)
         {
             try
@@ -264,12 +291,13 @@ namespace C969___Axl_Nunez.Forms
                     string query = @"
                         SELECT COUNT(*)
                         FROM appointment
-                        WHERE (@start < end AND @end > start)";
+                        WHERE @start < end AND @end > start AND customerId = @customerId";
 
                     using (var cmd = new MySqlCommand(query, connection))
                     {
-                        cmd.Parameters.AddWithValue("@start", start);
-                        cmd.Parameters.AddWithValue("@end", end);
+                        cmd.Parameters.AddWithValue("@start", AdjustToTimeZone(start));
+                        cmd.Parameters.AddWithValue("@end", AdjustToTimeZone(end));
+                        cmd.Parameters.AddWithValue("@customerId", ((dynamic)cmbCustomer.SelectedItem).Id);
                         int count = Convert.ToInt32(cmd.ExecuteScalar());
                         return count > 0;
                     }
@@ -297,6 +325,48 @@ namespace C969___Axl_Nunez.Forms
                 dtpEndTime.Value = DateTime.Parse(selectedRow.Cells["End Time"].Value.ToString());
             }
         }
+
+        public void CheckForUpcomingAppointments(string username)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = @"
+                SELECT 
+                    a.title, 
+                    a.start 
+                FROM appointment a
+                INNER JOIN user u ON a.userId = u.userId
+                WHERE u.username = @username
+                AND TIMESTAMPDIFF(MINUTE, NOW(), a.start) BETWEEN 0 AND 15";
+
+                    using (var cmd = new MySqlCommand(query, connection))
+                    {
+                        cmd.Parameters.AddWithValue("@username", username);
+
+                        using (var reader = cmd.ExecuteReader())
+                        {
+                            if (reader.HasRows)
+                            {
+                                while (reader.Read())
+                                {
+                                    string title = reader["title"].ToString();
+                                    DateTime start = ConvertFromUtc((DateTime)reader["start"]);
+                                    MessageBox.Show($"Upcoming Appointment: {title} at {start}", "Alert", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error checking for upcoming appointments: {ex.Message}");
+            }
+        }
+
 
 
         private void BtnClear_Click(object sender, EventArgs e)

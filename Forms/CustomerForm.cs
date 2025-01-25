@@ -4,6 +4,7 @@ using System.Data;
 using MySql.Data.MySqlClient;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Globalization;
 
 namespace C969___Axl_Nunez.Forms
 {
@@ -17,6 +18,8 @@ namespace C969___Axl_Nunez.Forms
             connectionString = ConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString;
             LoadCustomers();
             dgvCustomers.ClearSelection();
+            //Thread.CurrentThread.CurrentCulture = new CultureInfo("es-ES");
+            //Thread.CurrentThread.CurrentUICulture = new CultureInfo("es-ES");
         }
 
         private void LoadCustomers()
@@ -153,6 +156,13 @@ namespace C969___Axl_Nunez.Forms
                     return;
                 }
 
+                var result = MessageBox.Show("Are you sure you want to delete this customer and all related appointments?",
+                                             "Confirm Delete",
+                                             MessageBoxButtons.YesNo,
+                                             MessageBoxIcon.Warning);
+
+                if (result != DialogResult.Yes) return;
+
                 var selectedRow = dgvCustomers.SelectedRows[0];
                 int customerId = Convert.ToInt32(selectedRow.Cells["CustomerId"].Value);
 
@@ -250,17 +260,24 @@ namespace C969___Axl_Nunez.Forms
 
         private bool ValidateCustomer()
         {
-            if (string.IsNullOrWhiteSpace(txtName.Text) ||
-                string.IsNullOrWhiteSpace(txtAddress.Text) ||
-                string.IsNullOrWhiteSpace(txtPhone.Text))
+            if (string.IsNullOrWhiteSpace(txtName.Text))
             {
-                MessageBox.Show("All fields are required.");
+                MessageBox.Show("Name field is required.");
+                txtName.Focus();
                 return false;
             }
 
-            if (!Regex.IsMatch(txtPhone.Text, @"^[\d-]+$"))
+            if (string.IsNullOrWhiteSpace(txtAddress.Text))
+            {
+                MessageBox.Show("Address field is required.");
+                txtAddress.Focus();
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(txtPhone.Text) || !Regex.IsMatch(txtPhone.Text, @"^[\d-]+$"))
             {
                 MessageBox.Show("Invalid phone number format.");
+                txtPhone.Focus();
                 return false;
             }
 

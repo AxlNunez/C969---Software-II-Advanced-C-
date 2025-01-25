@@ -8,42 +8,48 @@
 
         private void InitializeComponent()
         {
-            this.btnManageCustomers = new System.Windows.Forms.Button();
-            this.btnManageAppointments = new System.Windows.Forms.Button();
-            this.btnViewCalendar = new System.Windows.Forms.Button();
-
+            btnManageCustomers = new Button();
+            btnManageAppointments = new Button();
+            btnViewCalendar = new Button();
+            SuspendLayout();
             // 
             // btnManageCustomers
             // 
-            this.btnManageCustomers.Location = new System.Drawing.Point(100, 50);
-            this.btnManageCustomers.Size = new System.Drawing.Size(200, 30);
-            this.btnManageCustomers.Text = "Manage Customers";
-            this.btnManageCustomers.Click += new System.EventHandler(this.btnManageCustomers_Click);
-
+            btnManageCustomers.Location = new Point(100, 50);
+            btnManageCustomers.Name = "btnManageCustomers";
+            btnManageCustomers.Size = new Size(200, 30);
+            btnManageCustomers.TabIndex = 0;
+            btnManageCustomers.Text = "Manage Customers";
+            btnManageCustomers.Click += btnManageCustomers_Click;
             // 
             // btnManageAppointments
             // 
-            this.btnManageAppointments.Location = new System.Drawing.Point(100, 100);
-            this.btnManageAppointments.Size = new System.Drawing.Size(200, 30);
-            this.btnManageAppointments.Text = "Manage Appointments";
-            this.btnManageAppointments.Click += new System.EventHandler(this.btnManageAppointments_Click);
-
+            btnManageAppointments.Location = new Point(100, 100);
+            btnManageAppointments.Name = "btnManageAppointments";
+            btnManageAppointments.Size = new Size(200, 30);
+            btnManageAppointments.TabIndex = 1;
+            btnManageAppointments.Text = "Manage Appointments";
+            btnManageAppointments.Click += btnManageAppointments_Click;
             // 
             // btnViewCalendar
             // 
-            this.btnViewCalendar.Location = new System.Drawing.Point(100, 150);
-            this.btnViewCalendar.Size = new System.Drawing.Size(200, 30);
-            this.btnViewCalendar.Text = "View Calendar";
-            this.btnViewCalendar.Click += new System.EventHandler(this.btnViewCalendar_Click);
-
+            btnViewCalendar.Location = new Point(100, 150);
+            btnViewCalendar.Name = "btnViewCalendar";
+            btnViewCalendar.Size = new Size(200, 30);
+            btnViewCalendar.TabIndex = 2;
+            btnViewCalendar.Text = "View Calendar";
+            btnViewCalendar.Click += btnViewCalendar_Click;
             // 
             // MainForm
             // 
-            this.ClientSize = new System.Drawing.Size(400, 250);
-            this.Controls.Add(this.btnManageCustomers);
-            this.Controls.Add(this.btnManageAppointments);
-            this.Controls.Add(this.btnViewCalendar);
-            this.Text = "Main Menu";
+            ClientSize = new Size(400, 250);
+            Controls.Add(btnManageCustomers);
+            Controls.Add(btnManageAppointments);
+            Controls.Add(btnViewCalendar);
+            Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Main Menu";
+            ResumeLayout(false);
         }
     }
 }

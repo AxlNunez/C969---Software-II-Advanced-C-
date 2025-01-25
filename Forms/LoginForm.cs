@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Configuration;
 using System.Globalization;
+using System.Threading;
 using System.Windows.Forms;
 using MySql.Data.MySqlClient;
 
@@ -14,6 +15,7 @@ namespace C969___Axl_Nunez.Forms
         {
             InitializeComponent();
             connectionString = ConfigurationManager.ConnectionStrings["MySqlConnection"].ConnectionString;
+            SetLanguage("en-US");
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -23,8 +25,12 @@ namespace C969___Axl_Nunez.Forms
 
             if (Authenticate(username, password))
             {
-                string location = CultureInfo.CurrentCulture.DisplayName;
-                MessageBox.Show($"Login successful. Detected location: {location}");
+                string location = new CultureInfo("en-US").DisplayName;
+                string loginMessage = string.Format(GetTranslatedMessage("LoginSuccessWithLocation"), location);
+                MessageBox.Show(loginMessage);
+
+                var appointmentForm = new AppointmentForm();
+                appointmentForm.CheckForUpcomingAppointments(username);
 
                 LogActivity(username);
                 new MainForm().Show();
@@ -62,14 +68,40 @@ namespace C969___Axl_Nunez.Forms
 
         private string GetTranslatedMessage(string key)
         {
-            var rm = new System.Resources.ResourceManager("C969___Axl_Nunez.Resources.Strings", typeof(LoginForm).Assembly);
-            return rm.GetString(key, CultureInfo.CurrentCulture);
+            try
+            {
+                var rm = new System.Resources.ResourceManager("C969___Axl_Nunez.Resources.Strings", typeof(LoginForm).Assembly);
+                return rm.GetString(key, CultureInfo.CurrentCulture) ?? key;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Translation error: {ex.Message}");
+                return key;
+            }
         }
 
         private void LogActivity(string username)
         {
             string logEntry = $"{DateTime.Now}: {username} logged in.";
             System.IO.File.AppendAllText("Login_History.txt", logEntry + Environment.NewLine);
+        }
+
+        private void SetLanguage(string cultureCode)
+        {
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(cultureCode);
+            Thread.CurrentThread.CurrentUICulture = new CultureInfo(cultureCode);
+        }
+
+        private void btnEnglish_Click(object sender, EventArgs e)
+        {
+            SetLanguage("en-US");
+            MessageBox.Show("Language switched to English.");
+        }
+
+        private void btnSpanish_Click(object sender, EventArgs e)
+        {
+            SetLanguage("es-ES");
+            MessageBox.Show("Idioma cambiado a Español.");
         }
     }
 }
